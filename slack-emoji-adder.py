@@ -1,9 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-
+from selenium.webdriver.support import expected_conditions as EC
+import os
+import sys
 import json
 
 # get credendials from the json file
@@ -14,21 +15,45 @@ with open('creds.json') as json_data_file:
 # set your credentials and workspace here so your username and password isn't inline code :)
 username = data["username"]
 password = data["password"]
-workspace = data["workspace"] + "/customize/emoji"
+workspace = data["workspace"] + \
+    "/?redir=%2Fcustomize%2Femoji"  # /customize/emoji
 
-# the driver isn't working and idk why
-# already tried (per: https://www.dev2qa.com/how-to-resolve-webdriverexception-geckodriver-executable-needs-to-be-in-path/):
-# brew install geckodriver #installed geckodriver
-# geckodriver --version    #verified it was installed
-# which geckodriver        #verified it was in my path
-# 🤷‍♀️
-# driver = webdriver.Firefox()
-# # driver = webdriver.Firefox(executable_path='/usr/local/bin/geckodriver')
-# driver.get(workspace)
+driver = webdriver.Chrome()
+driver.get(workspace)
 
-# try:
-#     wait = WebDriverWait(driver, 10)
-#     wait.until(lambda driver: driver.current_url !=
-#                "https://comparchwi19.slack.com/customize/emoji")
-# finally:
-#     driver.quit()
+userinput = driver.find_element_by_id("email")
+userinput.send_keys("user")
+
+passinput = driver.find_element_by_id("password")
+passinput.send_keys("pass")
+passinput.submit()
+
+# the next page
+
+path = "./emojis"
+dirs = os.listdir(path)
+for pic in dirs:
+    # there needs to be a "wait until page loaded" up here
+    driver.findelement
+    addcustomemojibutt = driver.find_element_by_class_name(
+        "c-button c-button--primary c-button--medium p-customize_emoji_wrapper__custom_button null--primary null--medium")
+    addcustomemojibutt.click()
+
+    uploadimagebutt = driver.find_element_by_class_name(
+        "c-button c-button--outline c-button--medium null--outline null--medium")
+    uploadimagebutt.click(pic)  # hopefully this will be a file
+
+    nameinput = driver.find_element_by_id("emojiname")
+    nameinput.send_keys(pic)  # hopefully this will turn into a string
+
+    error = driver.find_element_by_id("c-alert__message")
+    # this can be anything....
+    if("Please make sure your file is a GIF, JPEG, or PNG." in error.text):
+        print("bad file")  # log what file was not an image
+    elif("This name is already in use by another emoji." in error.text):
+        print("name has already been used bruh")  # possibly rename it??
+    else:
+        submitbutt = driver.find_element_by_class_name(
+            "c-button c-button--primary c-button--medium c-dialog__go null--primary null--medium")  # submit that bishhh
+
+driver.quit()

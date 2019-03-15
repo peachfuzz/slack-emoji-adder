@@ -9,9 +9,11 @@ install it with
 pip install selenium
 ```
 
-You will need to have driver for firefox.
+You will need to have driver for Chrome.
 Install it with
 
 ```bash
-brew install geckodriver
+brew install chromedriver
 ```
+
+Then simply put your images in the "emojis" folder. The program will attempt to upload all of the file that are in the emojis folder.
