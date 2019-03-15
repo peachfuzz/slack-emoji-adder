@@ -1,4 +1,5 @@
 {
-    "username": "your email",
-    "password": "your password"
+  "username": "your email",
+  "password": "your password",
+  "workspace": "https://<your workspace>.slack.com"
 }
