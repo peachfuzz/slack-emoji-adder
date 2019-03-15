@@ -1,6 +1,4 @@
 {
-    "mycreds": {
-        "username": "your email",
-        "password": "your password"
-    }
+    "username": "your email",
+    "password": "your password"
 }
