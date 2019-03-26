@@ -3,10 +3,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.proxy import *
 import os
 import sys
 import json
-from selenium.webdriver.common.proxy import *
+
 
 # get credendials from the json file
 # either rename the creds-template.json file to creds.json or change this line to say creds-template.json
@@ -18,18 +19,9 @@ username = data["username"]
 password = data["password"]
 workspace = data["workspace"] + "/?redir=%2Fcustomize%2Femoji"  # /customize/emoji
 
-# driver = webdriver.Chrome()
+driver = webdriver.Chrome()
+# driver = webdriver.Firefox()
 
-
-firefoxProfile = webdriver.FirefoxProfile()
-firefoxProfile.set_preference("permissions.default.stylesheet", 2)
-firefoxProfile.set_preference("permissions.default.image", 2)
-firefoxProfile.set_preference("dom.ipc.plugins.enabled.libflashplayer.so", "false")
-firefoxProfile.set_preference("http.response.timeout", 10)
-firefoxProfile.set_preference("dom.max_script_run_time", 10)
-
-driver = webdriver.Firefox(firefox_profile=firefoxProfile)
-# driver.set_page_load_timeout(10)
 driver.get(workspace)
 
 userinput = driver.find_element_by_id("email")
@@ -44,20 +36,33 @@ passinput.submit()
 path = "./emojis"
 dirs = os.listdir(path)
 for pic in dirs:
-    # there needs to be a "wait until page loaded" up here
-    driver.findelement
-    addcustomemojibutt = driver.find_element_by_class_name(
-        "c-button c-button--primary c-button--medium p-customize_emoji_wrapper__custom_button null--primary null--medium"
-    )
-    addcustomemojibutt.click()
+    addcustomemojibutt = ""
+    while not addcustomemojibutt:
+        try:
+            addcustomemojibutt = driver.find_element_by_class_name(
+                "p-customize_emoji_wrapper__custom_button"
+            )
+        except:
+            continue
 
-    uploadimagebutt = driver.find_element_by_class_name(
-        "c-button c-button--outline c-button--medium null--outline null--medium"
-    )
-    uploadimagebutt.click(pic)  # hopefully this will be a file
+    addcustomemojibutt.click()
+    uploadimagebutt = ""
+    while not uploadimagebutt:
+        try:
+            uploadimagebutt = driver.find_element_by_xpath(
+                "//button[text()='Upload Image']"
+            )
+        except:
+            continue
+
+    uploadimagebutt.send_keys(
+        os.getcwd() + pic
+    )  # hopefully this will turn into a string
+    # uploadimagebutt.click()  # hopefully this will be a file
 
     nameinput = driver.find_element_by_id("emojiname")
-    nameinput.send_keys(pic)  # hopefully this will turn into a string
+    pic_str = pic.split(".")[0]
+    nameinput.send_keys(pic)
 
     error = driver.find_element_by_id("c-alert__message")
     # this can be anything....
