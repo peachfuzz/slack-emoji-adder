@@ -45,9 +45,12 @@ for pic in dirs:
             addcustomemojibutt.click()
         except:
             continue
+    addcustomemojibutt = ""
 
     uploadimageinput = ""
+    temp = ""
     while not uploadimageinput:
+
         try:
             uploadimageinput = driver.find_element_by_id("emojiimg")
             temp = os.getcwd() + "/emojis/" + pic
@@ -57,11 +60,17 @@ for pic in dirs:
         except:
             continue
 
+    uploadimageinput = ""
+    temp = ""
+
     nameinput = driver.find_element_by_id("emojiname")
+    # maybe put all images in hash table and check to see if pic_str is in hash table??
+    pic_str = ""
     pic_str = pic.split(".")[0]
     nameinput.send_keys(pic_str)
-
+    pic_str = ""
     attempts = 0
+    error = ""
     while attempts < 10:
         try:
             error = driver.find_element_by_id("c-alert__message")
@@ -73,6 +82,7 @@ for pic in dirs:
         except:
             attempts += 1
             continue
+    error = ""
     submitbutt = ""
     while not submitbutt:
         try:
@@ -83,4 +93,6 @@ for pic in dirs:
             submitbutt.click()
         except:
             continue
-# driver.quit()
+    submitbutt = ""
+input()
+driver.quit()
