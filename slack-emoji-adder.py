@@ -7,6 +7,7 @@ from selenium.webdriver.common.proxy import *
 import os
 import sys
 import json
+import time
 
 
 # get credendials from the json file
@@ -23,7 +24,7 @@ driver = webdriver.Chrome()
 # driver = webdriver.Firefox()
 
 driver.get(workspace)
-
+time.sleep(1)
 userinput = driver.find_element_by_id("email")
 userinput.send_keys(username)
 
@@ -32,11 +33,12 @@ passinput.send_keys(password)
 passinput.submit()
 
 # the next page
-
 path = "./emojis"
 dirs = os.listdir(path)
+
 for pic in dirs:
     addcustomemojibutt = ""
+    time.sleep(1)
     while not addcustomemojibutt:
         try:
             addcustomemojibutt = driver.find_element_by_xpath(
@@ -45,12 +47,11 @@ for pic in dirs:
             addcustomemojibutt.click()
         except:
             continue
-    addcustomemojibutt = ""
 
+    time.sleep(1)
     uploadimageinput = ""
     temp = ""
     while not uploadimageinput:
-
         try:
             uploadimageinput = driver.find_element_by_id("emojiimg")
             temp = os.getcwd() + "/emojis/" + pic
@@ -60,39 +61,41 @@ for pic in dirs:
         except:
             continue
 
-    uploadimageinput = ""
-    temp = ""
-
     nameinput = driver.find_element_by_id("emojiname")
     # maybe put all images in hash table and check to see if pic_str is in hash table??
     pic_str = ""
     pic_str = pic.split(".")[0]
     nameinput.send_keys(pic_str)
-    pic_str = ""
+
     attempts = 0
-    error = ""
-    while attempts < 10:
-        try:
-            error = driver.find_element_by_id("c-alert__message")
-            # this can be anything....
-            if "Please make sure your file is a GIF, JPEG, or PNG." in error.text:
-                print("bad file")  # log what file was not an image
-            elif "This name is already in use by another emoji." in error.text:
-                print("name has already been used bruh")  # possibly rename it??
-        except:
-            attempts += 1
-            continue
     error = ""
     submitbutt = ""
     while not submitbutt:
         try:
-            # submitbutt = driver.find_element_by_class_name(
-            #     "c-button c-button--primary c-button--medium c-dialog__go null--primary null--medium"
-            # )  # submit that bishhh
-            submitbutt = driver.find_element_by_xpath("//button[text()='Save']")
+e           submitbutt = driver.find_element_by_xpath("//button[text()='Save']")
+            time.sleep(1)
+            attempts = 0
+            while attempts < 10:
+                try:
+                    error = driver.find_element_by_class_name("c-alert__message").text
+                    # this can be anything....
+                    if "Please make sure your file is a GIF, JPEG, or PNG." in error:
+                        print("bad file")  # log what file was not an image
+                        driver.find_element_by_class_name("c-dialog__close").click()
+                        break
+                    elif "This name is already in use by another emoji." in error:
+                        print("name has already been used bruh")  # possibly rename it??
+                        driver.find_element_by_class_name("c-dialog__close").click()
+                        break
+                    elif "" in error:
+                        driver.find_element_by_class_name("c-dialog__close").click()
+                        break
+                except:
+                    attempts += 1
+                    continue
+                error = ""
             submitbutt.click()
         except:
             continue
-    submitbutt = ""
 input()
 driver.quit()
