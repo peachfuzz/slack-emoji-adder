@@ -72,7 +72,7 @@ for pic in dirs:
     submitbutt = ""
     while not submitbutt:
         try:
-e           submitbutt = driver.find_element_by_xpath("//button[text()='Save']")
+            submitbutt = driver.find_element_by_xpath("//button[text()='Save']")
             time.sleep(1)
             attempts = 0
             while attempts < 10:
@@ -84,12 +84,23 @@ e           submitbutt = driver.find_element_by_xpath("//button[text()='Save']")
                         driver.find_element_by_class_name("c-dialog__close").click()
                         break
                     elif "This name is already in use by another emoji." in error:
-                        print("name has already been used bruh")  # possibly rename it??
+                        print(
+                            pic_str + " name has already been used bruh"
+                        )  # possibly rename it??
                         driver.find_element_by_class_name("c-dialog__close").click()
                         break
-                    elif "" in error:
-                        driver.find_element_by_class_name("c-dialog__close").click()
+                    elif "taken" in error:
+                        driver.find_element_by_class_name(
+                            "c-dialog__close"
+                        ).click()  # already in use by existing emoji
                         break
+                    elif not error:
+                        print(error + ": " + pic_str)
+                        driver.find_element_by_class_name(
+                            "c-dialog__close"
+                        ).click()  # already in use by existing emoji
+                        break
+                    # other errors: "contains surprise"
                 except:
                     attempts += 1
                     continue
