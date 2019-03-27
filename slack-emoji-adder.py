@@ -94,19 +94,55 @@ for pic in dirs:
                             "c-dialog__close"
                         ).click()  # already in use by existing emoji
                         break
-                    elif not error:
-                        print(error + ": " + pic_str)
+                    elif error != "":
                         driver.find_element_by_class_name(
                             "c-dialog__close"
                         ).click()  # already in use by existing emoji
+                        print(error + ": " + pic_str)
                         break
                     # other errors: "contains surprise"
+                    error = ""
                 except:
                     attempts += 1
+                    error = ""
                     continue
                 error = ""
             submitbutt.click()
         except:
             continue
+        time.sleep(1)
+        attempts = 0
+        while attempts < 10:
+            try:
+                error = driver.find_element_by_class_name("c-alert__message").text
+                # this can be anything....
+                if "Please make sure your file is a GIF, JPEG, or PNG." in error:
+                    print("bad file")  # log what file was not an image
+                    driver.find_element_by_class_name("c-dialog__close").click()
+                    break
+                elif "This name is already in use by another emoji." in error:
+                    print(
+                        pic_str + " name has already been used bruh"
+                    )  # possibly rename it??
+                    driver.find_element_by_class_name("c-dialog__close").click()
+                    break
+                elif "taken" in error:
+                    driver.find_element_by_class_name(
+                        "c-dialog__close"
+                    ).click()  # already in use by existing emoji
+                    break
+                elif error != "":
+                    driver.find_element_by_class_name(
+                        "c-dialog__close"
+                    ).click()  # already in use by existing emoji
+                    print(error + ": " + pic_str)
+                    break
+                # other errors: "contains surprise"
+                error = ""
+            except:
+                attempts += 1
+                error = ""
+                continue
+            error = ""
 input()
 driver.quit()
